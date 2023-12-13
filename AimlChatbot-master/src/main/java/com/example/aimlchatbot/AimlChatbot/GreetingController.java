@@ -19,8 +19,8 @@ public class GreetingController implements ServletContextAware {
 
 	private ServletContext servletContext;
 
-	
-	Admindao admindao=new Admindao();
+	@Autowired
+	Admindao admindao;
 
 	@MessageMapping("/talktorobot")
 	@SendTo("/topic/greetings")
@@ -37,23 +37,58 @@ public class GreetingController implements ServletContextAware {
 		Thread.sleep(1000); // simulated delay
 		return new Greeting(HtmlUtils.htmlEscape(response));
 	}
+	
+	@MessageMapping("/talktorobot1")
+	@SendTo("/topic/greetings")
+	public Greeting about(HelloMessage message) throws Exception {
+		String response = "";
+		try {
+			String textLine = message.getMessage().toLowerCase();
+			response = admindao.findserviceeByname(textLine)+"  "+" "+"Want to know about service Please enter you name";
+			if(response.isEmpty()||response==null)
+				response="Invalid service please Provide the name";
+			System.out.println("Robot : " + response);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		Thread.sleep(1000); // simulated delay
+		return new Greeting(HtmlUtils.htmlEscape(response));
+	}
+	
+	@MessageMapping("/talktorobot2")
+	@SendTo("/topic/greetings")
+	public Greeting ab(HelloMessage message,String num) throws Exception {
+		String response = "";
+		try {
+			String textLine = message.getMessage().toLowerCase();
+			int number=Integer.parseInt(num);
+			response = admindao.SaveData(message,number);
+			if(response.isEmpty()||response==null)
+				response="Invalid service please Provide the name";
+			System.out.println("Robot : " + response);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		Thread.sleep(1000); // simulated delay
+		return new Greeting(HtmlUtils.htmlEscape(response));
+	}
 
 	private String executeDefault(String textLine) {
 		List<String> li=admindao.GetAllquerries();
 		
-		String ans="welcome"+textLine+"We provide services like";
+		String ans="welcome We provide services like";
+		int f=1;
 		for(String a:li)
 		{
-			ans=ans+a;
+			ans=ans+f+". "+a+" ";
+			f++;
 		}
-		return ans;
+		return ans+" "+"please type the service name you want to know about";
 
 
 	}
 
-	private String executeDefault(String response, String textLine) {
-		return "Welcome" + textLine;
-	}
+
 
 	@Override
 	public void setServletContext(ServletContext servletContext) {

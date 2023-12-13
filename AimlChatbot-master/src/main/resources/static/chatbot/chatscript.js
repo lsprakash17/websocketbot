@@ -252,11 +252,32 @@ function disconnect() {
     console.log("Disconnected");
 }
 
+var messageCounter = 0;
+const userData = {};
 function sendMessage() {
 	if(stompClient != null){
+		if(messageCounter==0)
+		{
 		var msg = $("#chat-input").val();
 		request_message(msg);
 	    stompClient.send("/app/talktorobot", {}, JSON.stringify({'message': msg}));
+	    messageCounter++;
+    }
+    else if(messageCounter==1)
+    {
+		var msg = $("#chat-input").val();
+		stompClient.send("/app/talktorobot1",{},JSON.stringify({'message':msg}));
+		request_message(msg);
+		messageCounter++;
+	}
+	else if(messageCounter==2)
+	{
+		var msg = $("#chat-input").val();
+		stompClient.send("/app/talktorobot2",{},JSON.stringify({'message':msg,'num':messageCounter}));
+		request_message(msg);
+		messageCounter++;
+	}
+	
     }
     else {
     	var msg = "Kindly connect to web server";
@@ -311,6 +332,7 @@ function response_message(msg) {
     str += "          <\/span>";
     str += "          <div id='ct_"+INDEX+"' class=\"cm-msg-text\">";
     str += msg;
+    str += " "
     str += "          <span id='sp_"+INDEX+"' style='cursor:pointer;font-size:18px;' class=\"fa fa-volume-up\" onclick='speaktext("+INDEX+")'></\span><\/div>";
     str += "        <\/div>";
     $(".chat-logs").append(str);
