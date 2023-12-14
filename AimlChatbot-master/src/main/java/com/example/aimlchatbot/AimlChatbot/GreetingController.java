@@ -44,7 +44,7 @@ public class GreetingController implements ServletContextAware {
 		String response = "";
 		try {
 			String textLine = message.getMessage().toLowerCase();
-			response = admindao.findserviceeByname(textLine)+"  "+" "+"Want to know about service Please enter you name";
+			response = admindao.findserviceeByname(textLine)+"  "+" "+".To know more about our products, please enter your name.";
 			if(response.isEmpty()||response==null)
 				response="Invalid service please Provide the name";
 			System.out.println("Robot : " + response);
@@ -117,7 +117,7 @@ public class GreetingController implements ServletContextAware {
 		int f=1;
 		for(String a:li)
 		{
-			ans=ans+"\n"+f+". "+a+" ";
+			ans=ans+"\n"+a;
 			f++;
 		}
 		return ans;

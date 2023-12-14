@@ -147,7 +147,7 @@ notesList.on('click', function(e) {
 	  Speech Synthesis 
 ------------------------------*/
 
-function readOutLoud(message) {
+/*function readOutLoud(message) {
 	var speech = new SpeechSynthesisUtterance();
 
 	// Set the text and voice attributes.
@@ -159,7 +159,7 @@ function readOutLoud(message) {
 	window.speechSynthesis.speak(speech);
 }
 
-
+*/
 
 /*-----------------------------
 	  Helper Functions 
@@ -261,30 +261,23 @@ function sendMessage() {
 			stompClient.send("/app/talktorobot", {}, JSON.stringify({ 'message': msg }));
 			messageCounter++;
 		}
-		else if (messageCounter == 1) {
-			var msg = $("#chat-input").val();
-			stompClient.send("/app/talktorobot1", {}, JSON.stringify({ 'message': msg }));
-			request_message(msg);
-			messageCounter++;
-		}
+		
 		else if (messageCounter == 2) {
-			nums = Math.floor(Math.random() * 100) + 1 + "abc";
+			nums = Math.floor(Math.random() * 10000) + 1 + "abc";
 			var msg = $("#chat-input").val();
-			var number = messageCounter;
 			stompClient.send("/app/talktorobot2", {}, JSON.stringify({ 'message': msg, 'num': nums }));
 			request_message(msg);
 			messageCounter++;
 		}
 		else if (messageCounter == 3) {
 			var msg = $("#chat-input").val();
-			var number = messageCounter;
+
 			stompClient.send("/app/talktorobot3", {}, JSON.stringify({ 'message': msg, 'num': nums }));
 			request_message(msg);
 			messageCounter++;
 		}
 		else if (messageCounter == 4) {
 			var msg = $("#chat-input").val();
-			var number = messageCounter;
 			stompClient.send("/app/talktorobot4", {}, JSON.stringify({ 'message': msg, 'num': nums }));
 			request_message(msg);
 			messageCounter++;
@@ -295,6 +288,18 @@ function sendMessage() {
 		var msg = "Kindly connect to web server";
 		request_message(msg);
 	}
+}
+
+function handleButtonClick(bvalues)
+{
+	debugger
+	var msg = bvalues;
+	 if (messageCounter == 1) {
+			stompClient.send("/app/talktorobot1", {}, JSON.stringify({ 'message': msg }));
+			request_message(msg);
+			messageCounter++;
+		}
+
 }
 
 function showGreeting(message) {
@@ -333,8 +338,6 @@ function request_message(msg) {
 }
 var a = 1;
 function response_message(msg) {
-	debugger;
-
 	if (msg == "")
 		msg = "Hi! Sorry, I beg your pardon.";
 	INDEX++;
@@ -346,12 +349,14 @@ function response_message(msg) {
 	str += "  <div id='ct_" + INDEX + "' class=\"cm-msg-text\">";
 	if (a == 1) {
 		var products = msg.split('\n'); // Split the string into lines
-			str += "    <ul>"; // Start of the list
-		str += "Welcome to Imprint. We provide below products select the service name";
+			str += "    <ul style='list-style: none;'>"; // Start of the list
+		str += "<p style='inherit'>Welcome to astiinfotech. We provide the following products. Please select the product you want to know more about <\/p>";
 		{
 			for (var i = 0; i < products.length; i++) {
 				if (products[i]) {
-					str += "      <li>" + products[i] + "<\/li>"; // Each line becomes a list item
+					
+					var g=products[i].split(".")
+					str += "<li><button class=\"btn\" style=' background-color: #c2fbd7; border-radius: 100px; box-shadow: rgba(44, 187, 99, .2) 0 -25px 18px -14px inset,rgba(44, 187, 99, .15) 0 1px 2px,rgba(44, 187, 99, .15) 0 2px 4px,rgba(44, 187, 99, .15) 0 4px 8px,rgba(44, 187, 99, .15) 0 8px 16px,rgba(44, 187, 99, .15) 0 16px 32px;color: green;cursor: pointer;display: inline-block;font-family: CerebriSans-Regular,-apple-system,system-ui,Roboto,sans-serif;padding: 7px 20px;text-align: center;text-decoration: none;transition: all 250ms;border: 0;font-size: 16px;user-select: none;-webkit-user-select: none;touch-action: manipulation;' onclick=\"handleButtonClick('"+products[i]+"')\" >" + products[i] + "</button></li><br>";
 				}
 				a++;
 			}
@@ -361,7 +366,7 @@ function response_message(msg) {
 	else{
 		str+=msg;
 	}
-	str += "    <span id='sp_" + INDEX + "' style='cursor:pointer;font-size:18px;' class=\"fa fa-volume-up\" onclick='speaktext(" + INDEX + ")'><\/span>";
+	/* str += "    <span id='sp_" + INDEX + "' style='cursor:pointer;font-size:18px;' class=\"fa fa-volume-up\" onclick='speaktext(" + INDEX + ")'><\/span>"; */
 	str += "  <\/div>";
 	str += "<\/div>";
 
@@ -370,8 +375,11 @@ function response_message(msg) {
 	$(".chat-logs").stop().animate({
 		scrollTop: $(".chat-logs")[0].scrollHeight
 	}, 1000);
-	readOutLoud(msg);
+	/*readOutLoud(msg);*/
 }
+
+
+
 
 
 function speaktext(e) {

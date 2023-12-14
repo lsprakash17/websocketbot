@@ -58,7 +58,7 @@
   cursor:pointer;
 }
 .chat-box-header {
-  background: #5A5EB9;
+  background: #1167ab;
   border-top-left-radius:5px;
   border-top-right-radius:5px; 
   color:white;
@@ -128,7 +128,7 @@
   box-shadow:none;
   border:none;
   border-radius:50%;
-  color:#5A5EB9;
+  color:#1167ab;
   width:35px;
   height:35px;  
 }
@@ -140,7 +140,7 @@
   box-shadow:none;
   border:none;
   border-radius:50%;
-  color:#5A5EB9;
+  color:#1167ab;
   width:35px;
   height:35px;  
 }
@@ -165,7 +165,7 @@
 
 .chat-logs::-webkit-scrollbar-thumb
 {
-	background-color: #5A5EB9;
+	background-color: #1167ab;
 }
 
 
@@ -207,7 +207,7 @@
 .chat-msg.self > .cm-msg-text {  
   float:right;
   margin-right:10px;
-  background: #5A5EB9;
+  background:#1167ab;
   color:white;
 }
 .cm-msg-button>ul>li {

@@ -59,7 +59,7 @@ public class Admindao {
 		user.setUname(message);
 		user.setRefid(num);
 		epo.save(user);
-		return "please provide phoneNumber";
+		return "Please provide your phone number:";
 	
 	}
 
@@ -73,7 +73,7 @@ public class Admindao {
 		{
 			user.setMobnum(textLine);
 			epo.save(user);
-			return "please provide Email address";
+			return "Please provide your Email ID:";
 		}
 	}
 
@@ -88,9 +88,9 @@ public class Admindao {
 			user.setEmail(textLine);
 			epo.save(user);
 			if(helper.sendLink(user))
-				return "We will contact you soon Happy to help";
+				return "We will contact you soon happy to help";
 			else
-				return "We will contact you soon Happy to help";
+				return "We will contact you soon happy to help";
 				
 		}
 	}
