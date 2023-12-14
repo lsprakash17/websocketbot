@@ -23,10 +23,10 @@ public class Userinformation {
 	private String email;
 	
 	@Column(name="Mobnum")
-	private Long Mobnum;
+	private String Mobnum;
 
 	@Column(name="refid")
-	private int refid;
+	private String refid;
 
 	public String getUname() {
 		return uname;
@@ -44,19 +44,19 @@ public class Userinformation {
 		this.email = email;
 	}
 
-	public Long getMobnum() {
+	public String getMobnum() {
 		return Mobnum;
 	}
 
-	public void setMobnum(Long mobnum) {
+	public void setMobnum(String mobnum) {
 		Mobnum = mobnum;
 	}
 
-	public int getRefid() {
+	public String getRefid() {
 		return refid;
 	}
 
-	public void setRefid(int refid) {
+	public void setRefid(String refid) {
 		this.refid = refid;
 	}
 	

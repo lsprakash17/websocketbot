@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import com.example.aimlchatbot.AimlChatbot.HelloMessage;
+import com.example.aimlchatbot.AimlChatbot.SendmailHelper;
 import com.example.aimlchatbot.dto.Adminquestions;
 import com.example.aimlchatbot.dto.Userinformation;
 import com.example.aimlchatbot.helperclass.Querries;
@@ -24,6 +25,9 @@ public class Admindao {
 	
 	@Autowired
 	UserInformationREpo epo;
+	
+	@Autowired
+	SendmailHelper helper;
 
 	public ResponseStructure<String> Savedata(Querries quer) {
 		Adminquestions adminquestions = new Adminquestions();
@@ -50,13 +54,45 @@ public class Admindao {
 		return repo.findJustificationByAddabout(textLine);
 	}
 
-	public String SaveData(HelloMessage message, int num) {
-		// TODO Auto-generated method stub
+	public String SaveData(String message, String num) {
 		Userinformation user=new Userinformation();
-		user.setUname(message.getMessage());
+		user.setUname(message);
 		user.setRefid(num);
 		epo.save(user);
 		return "please provide phoneNumber";
+	
+	}
+
+	public String FindandSaveData(String textLine, String number) {
+		Userinformation user=epo.findByRefid(number);
+		if(user==null)
+		{
+			return "something went wrong";
+		}
+		else
+		{
+			user.setMobnum(textLine);
+			epo.save(user);
+			return "please provide Email address";
+		}
+	}
+
+	public String FindandSaveDataEmail(String textLine, String number) {
+		Userinformation user=epo.findByRefid(number);
+		if(user==null)
+		{
+			return "something went wrong";
+		}
+		else
+		{
+			user.setEmail(textLine);
+			epo.save(user);
+			if(helper.sendLink(user))
+				return "We will contact you soon Happy to help";
+			else
+				return "We will contact you soon Happy to help";
+				
+		}
 	}
 
 }

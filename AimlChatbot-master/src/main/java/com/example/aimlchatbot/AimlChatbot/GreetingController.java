@@ -57,12 +57,13 @@ public class GreetingController implements ServletContextAware {
 	
 	@MessageMapping("/talktorobot2")
 	@SendTo("/topic/greetings")
-	public Greeting ab(HelloMessage message,String num) throws Exception {
+	public Greeting ab(HelloMessage message,Numberread num) throws Exception {
 		String response = "";
 		try {
 			String textLine = message.getMessage().toLowerCase();
-			int number=Integer.parseInt(num);
-			response = admindao.SaveData(message,number);
+			String number=num.getNum();
+			
+			response = admindao.SaveData(textLine,number);
 			if(response.isEmpty()||response==null)
 				response="Invalid service please Provide the name";
 			System.out.println("Robot : " + response);
@@ -72,18 +73,54 @@ public class GreetingController implements ServletContextAware {
 		Thread.sleep(1000); // simulated delay
 		return new Greeting(HtmlUtils.htmlEscape(response));
 	}
-
+	@MessageMapping("/talktorobot3")
+	@SendTo("/topic/greetings")
+	public Greeting abc(HelloMessage message,Numberread num) throws Exception {
+		String response = "";
+		try {
+			String textLine = message.getMessage().toLowerCase();
+			String number=num.getNum();
+			
+			response = admindao.FindandSaveData(textLine,number);
+			if(response.isEmpty()||response==null)
+				response="Invalid service please Provide the name";
+			System.out.println("Robot : " + response);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		Thread.sleep(1000); // simulated delay
+		return new Greeting(HtmlUtils.htmlEscape(response));
+	}
+	
+	@MessageMapping("/talktorobot4")
+	@SendTo("/topic/greetings")
+	public Greeting useremail(HelloMessage message,Numberread num) throws Exception {
+		String response = "";
+		try {
+			String textLine = message.getMessage().toLowerCase();
+			String number=num.getNum();
+			
+			response = admindao.FindandSaveDataEmail(textLine,number);
+			if(response.isEmpty()||response==null)
+				response="Invalid service please Provide the name";
+			System.out.println("Robot : " + response);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		Thread.sleep(1000); // simulated delay
+		return new Greeting(HtmlUtils.htmlEscape(response));
+	}
 	private String executeDefault(String textLine) {
 		List<String> li=admindao.GetAllquerries();
-		
-		String ans="welcome We provide services like";
+	
+		String ans = "";
 		int f=1;
 		for(String a:li)
 		{
-			ans=ans+f+". "+a+" ";
+			ans=ans+"\n"+f+". "+a+" ";
 			f++;
 		}
-		return ans+" "+"please type the service name you want to know about";
+		return ans;
 
 
 	}

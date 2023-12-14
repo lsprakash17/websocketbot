@@ -1,11 +1,11 @@
 try {
-  var SpeechRecognition = this.SpeechRecognition || this.webkitSpeechRecognition;
-  var recognition = new SpeechRecognition();
+	var SpeechRecognition = this.SpeechRecognition || this.webkitSpeechRecognition;
+	var recognition = new SpeechRecognition();
 }
-catch(e) {
-  console.error(e);
-  $('.no-browser-support').show();
-  $('.app').hide();
+catch (e) {
+	console.error(e);
+	$('.no-browser-support').show();
+	$('.app').hide();
 }
 
 var started = 0;
@@ -20,7 +20,7 @@ var notes = getAllNotes();
 renderNotes(notes);
 
 /*-----------------------------
-      Voice Recognition 
+	  Voice Recognition 
 ------------------------------*/
 
 // If false, the recording will stop after a few seconds of silence.
@@ -31,346 +31,378 @@ recognition.continuous = true;
 // This block is called every time the Speech APi captures a line. 
 recognition.onresult = function(event) {
 
-  // event is a SpeechRecognitionEvent object.
-  // It holds all the lines we have captured so far. 
-  // We only need the current one.
-  var current = event.resultIndex;
+	// event is a SpeechRecognitionEvent object.
+	// It holds all the lines we have captured so far. 
+	// We only need the current one.
+	var current = event.resultIndex;
 
-  // Get a transcript of what was said.
-  var transcript = event.results[current][0].transcript;
+	// Get a transcript of what was said.
+	var transcript = event.results[current][0].transcript;
 
-  // Add the current transcript to the contents of our Note.
-  // There is a weird bug on mobile, where everything is repeated twice.
-  // There is no official solution so far so we have to handle an edge case.
-  var mobileRepeatBug = (current == 1 && transcript == event.results[0][0].transcript);
+	// Add the current transcript to the contents of our Note.
+	// There is a weird bug on mobile, where everything is repeated twice.
+	// There is no official solution so far so we have to handle an edge case.
+	var mobileRepeatBug = (current == 1 && transcript == event.results[0][0].transcript);
 
-  if(!mobileRepeatBug) {
-    noteContent = transcript;
-    noteTextarea.val(noteContent);
-    sendMessage();
-  }
+	if (!mobileRepeatBug) {
+		noteContent = transcript;
+		noteTextarea.val(noteContent);
+		sendMessage();
+	}
 };
 
-recognition.onstart = function() { 
-  instructions.text('Voice recognition activated. Try speaking into the microphone.');
+recognition.onstart = function() {
+	instructions.text('Voice recognition activated. Try speaking into the microphone.');
 }
 
 recognition.onspeechend = function() {
-  instructions.text('You were quiet for a while so voice recognition turned itself off.');
+	instructions.text('You were quiet for a while so voice recognition turned itself off.');
 }
 
 recognition.onerror = function(event) {
-  if(event.error == 'no-speech') {
-    instructions.text('No speech was detected. Try again.');  
-  };
+	if (event.error == 'no-speech') {
+		instructions.text('No speech was detected. Try again.');
+	};
 }
 
 
 
 /*-----------------------------
-      App buttons and input 
+	  App buttons and input 
 ------------------------------*/
 
 $('#start-record-btn').on('click', function(e) {
-  if (noteContent.length) {
-    noteContent += ' ';
-  }
-  if(started==1)
-  {
-	 started = 0;
-	 recognition.stop();
-	 $(".fa-microphone-slash").removeClass("fa fa-microphone-slash").addClass("fa fa-microphone");
-	 instructions.text('Voice recognition paused.');
-  }
-  else
-  {
-	  started = 1;
-	  recognition.start();
-	  $(".fa-microphone").removeClass("fa fa-microphone").addClass("fa fa-microphone-slash");
-	  instructions.text('Voice recognition started.');
-  }
+	if (noteContent.length) {
+		noteContent += ' ';
+	}
+	if (started == 1) {
+		started = 0;
+		recognition.stop();
+		$(".fa-microphone-slash").removeClass("fa fa-microphone-slash").addClass("fa fa-microphone");
+		instructions.text('Voice recognition paused.');
+	}
+	else {
+		started = 1;
+		recognition.start();
+		$(".fa-microphone").removeClass("fa fa-microphone").addClass("fa fa-microphone-slash");
+		instructions.text('Voice recognition started.');
+	}
 });
 
 
 $('#pause-record-btn').on('click', function(e) {
-  recognition.stop();
-  $('#pause-record-btn').attr('id', 'start-record-btn');
-  $(".fa-microphone-slash").removeClass("fa fa-microphone-slash").addClass("fa fa-microphone");
-  instructions.text('Voice recognition paused.');
+	recognition.stop();
+	$('#pause-record-btn').attr('id', 'start-record-btn');
+	$(".fa-microphone-slash").removeClass("fa fa-microphone-slash").addClass("fa fa-microphone");
+	instructions.text('Voice recognition paused.');
 });
 
 // Sync the text inside the text area with the noteContent variable.
 noteTextarea.on('input', function() {
-  noteContent = $(this).val();
+	noteContent = $(this).val();
 })
 
 $('#save-note-btn').on('click', function(e) {
-  recognition.stop();
+	recognition.stop();
 
-  if(!noteContent.length) {
-    instructions.text('Could not save empty note. Please add a message to your note.');
-  }
-  else {
-    // Save note to localStorage.
-    // The key is the dateTime with seconds, the value is the content of the note.
-    saveNote(new Date().toLocaleString(), noteContent);
+	if (!noteContent.length) {
+		instructions.text('Could not save empty note. Please add a message to your note.');
+	}
+	else {
+		// Save note to localStorage.
+		// The key is the dateTime with seconds, the value is the content of the note.
+		saveNote(new Date().toLocaleString(), noteContent);
 
-    // Reset variables and update UI.
-    noteContent = '';
-    renderNotes(getAllNotes());
-    noteTextarea.val('');
-    instructions.text('Note saved successfully.');
-  }
-      
+		// Reset variables and update UI.
+		noteContent = '';
+		renderNotes(getAllNotes());
+		noteTextarea.val('');
+		instructions.text('Note saved successfully.');
+	}
+
 })
 
 
 notesList.on('click', function(e) {
-  e.preventDefault();
-  var target = $(e.target);
+	e.preventDefault();
+	var target = $(e.target);
 
-  // Listen to the selected note.
-  if(target.hasClass('listen-note')) {
-    var content = target.closest('.note').find('.content').text();
-    readOutLoud(content);
-  }
+	// Listen to the selected note.
+	if (target.hasClass('listen-note')) {
+		var content = target.closest('.note').find('.content').text();
+		readOutLoud(content);
+	}
 
-  // Delete note.
-  if(target.hasClass('delete-note')) {
-    var dateTime = target.siblings('.date').text();  
-    deleteNote(dateTime);
-    target.closest('.note').remove();
-  }
+	// Delete note.
+	if (target.hasClass('delete-note')) {
+		var dateTime = target.siblings('.date').text();
+		deleteNote(dateTime);
+		target.closest('.note').remove();
+	}
 });
 
 
 
 /*-----------------------------
-      Speech Synthesis 
+	  Speech Synthesis 
 ------------------------------*/
 
 function readOutLoud(message) {
 	var speech = new SpeechSynthesisUtterance();
 
-  // Set the text and voice attributes.
+	// Set the text and voice attributes.
 	speech.text = message;
 	speech.volume = 1;
 	speech.rate = 1;
 	speech.pitch = 1;
-  
+
 	window.speechSynthesis.speak(speech);
 }
 
 
 
 /*-----------------------------
-      Helper Functions 
+	  Helper Functions 
 ------------------------------*/
 
 function renderNotes(notes) {
-  var html = '';
-  if(notes.length) {
-    notes.forEach(function(note) {
-      html+= `<li class="note">
+	var html = '';
+	if (notes.length) {
+		notes.forEach(function(note) {
+			html += `<li class="note">
         <p class="header">
           <span class="date">${note.date}</span>
           <a href="#" class="listen-note" title="Listen to Note">Listen to Note</a>
           <a href="#" class="delete-note" title="Delete">Delete</a>
         </p>
         <p class="content">${note.content}</p>
-      </li>`;    
-    });
-  }
-  else {
-    html = '<li><p class="content">You don\'t have any notes yet.</p></li>';
-  }
-  notesList.html(html);
+      </li>`;
+		});
+	}
+	else {
+		html = '<li><p class="content">You don\'t have any notes yet.</p></li>';
+	}
+	notesList.html(html);
 }
 
 
 function saveNote(dateTime, content) {
-  localStorage.setItem('note-' + dateTime, content);
+	localStorage.setItem('note-' + dateTime, content);
 }
 
 
 function getAllNotes() {
-  var notes = [];
-  var key;
-  for (var i = 0; i < localStorage.length; i++) {
-    key = localStorage.key(i);
+	var notes = [];
+	var key;
+	for (var i = 0; i < localStorage.length; i++) {
+		key = localStorage.key(i);
 
-    if(key.substring(0,5) == 'note-') {
-      notes.push({
-        date: key.replace('note-',''),
-        content: localStorage.getItem(localStorage.key(i))
-      });
-    } 
-  }
-  return notes;
+		if (key.substring(0, 5) == 'note-') {
+			notes.push({
+				date: key.replace('note-', ''),
+				content: localStorage.getItem(localStorage.key(i))
+			});
+		}
+	}
+	return notes;
 }
 
 
 function deleteNote(dateTime) {
-  localStorage.removeItem('note-' + dateTime); 
+	localStorage.removeItem('note-' + dateTime);
 }
 
 //Chat Web API Script
 var stompClient = null;
 
 function setConnected(connected) {
-    $("#connect").prop("disabled", connected);
-    $("#disconnect").prop("disabled", !connected);
-    if (connected) {
-         $(".chat-box").show().fadeIn(300);   
-    }
-    else {
-         $(".chat-box").hide().fadeOut(300);   
-         recognition.stop();
-         $(".fa-microphone-slash").removeClass("fa fa-microphone-slash").addClass("fa fa-microphone");
-    }
-    $(".chat-logs").html("");
+	$("#connect").prop("disabled", connected);
+	$("#disconnect").prop("disabled", !connected);
+	if (connected) {
+		$(".chat-box").show().fadeIn(300);
+	}
+	else {
+		$(".chat-box").hide().fadeOut(300);
+		recognition.stop();
+		$(".fa-microphone-slash").removeClass("fa fa-microphone-slash").addClass("fa fa-microphone");
+	}
+	$(".chat-logs").html("");
 }
 
 function connect() {
-    var socket = new SockJS('/gs-guide-websocket');
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
-        setConnected(true);
-        console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/greetings', function (greeting) {
-            showGreeting(JSON.parse(greeting.body).content);
-        });
-    });
+	var socket = new SockJS('/gs-guide-websocket');
+	stompClient = Stomp.over(socket);
+	stompClient.connect({}, function(frame) {
+		setConnected(true);
+		console.log('Connected: ' + frame);
+		stompClient.subscribe('/topic/greetings', function(greeting) {
+			showGreeting(JSON.parse(greeting.body).content);
+		});
+	});
 }
 
 function disconnect() {
-    if (stompClient !== null) {
-        stompClient.disconnect();
-        stompClient = null;
-    }
-    setConnected(false);
-    console.log("Disconnected");
+	if (stompClient !== null) {
+		stompClient.disconnect();
+		stompClient = null;
+	}
+	setConnected(false);
+	console.log("Disconnected");
 }
 
 var messageCounter = 0;
+var nums = 0;
 const userData = {};
 function sendMessage() {
-	if(stompClient != null){
-		if(messageCounter==0)
-		{
-		var msg = $("#chat-input").val();
-		request_message(msg);
-	    stompClient.send("/app/talktorobot", {}, JSON.stringify({'message': msg}));
-	    messageCounter++;
-    }
-    else if(messageCounter==1)
-    {
-		var msg = $("#chat-input").val();
-		stompClient.send("/app/talktorobot1",{},JSON.stringify({'message':msg}));
-		request_message(msg);
-		messageCounter++;
+	if (stompClient != null) {
+		if (messageCounter == 0) {
+			var msg = $("#chat-input").val();
+			request_message(msg);
+			stompClient.send("/app/talktorobot", {}, JSON.stringify({ 'message': msg }));
+			messageCounter++;
+		}
+		else if (messageCounter == 1) {
+			var msg = $("#chat-input").val();
+			stompClient.send("/app/talktorobot1", {}, JSON.stringify({ 'message': msg }));
+			request_message(msg);
+			messageCounter++;
+		}
+		else if (messageCounter == 2) {
+			nums = Math.floor(Math.random() * 100) + 1 + "abc";
+			var msg = $("#chat-input").val();
+			var number = messageCounter;
+			stompClient.send("/app/talktorobot2", {}, JSON.stringify({ 'message': msg, 'num': nums }));
+			request_message(msg);
+			messageCounter++;
+		}
+		else if (messageCounter == 3) {
+			var msg = $("#chat-input").val();
+			var number = messageCounter;
+			stompClient.send("/app/talktorobot3", {}, JSON.stringify({ 'message': msg, 'num': nums }));
+			request_message(msg);
+			messageCounter++;
+		}
+		else if (messageCounter == 4) {
+			var msg = $("#chat-input").val();
+			var number = messageCounter;
+			stompClient.send("/app/talktorobot4", {}, JSON.stringify({ 'message': msg, 'num': nums }));
+			request_message(msg);
+			messageCounter++;
+		}
+
 	}
-	else if(messageCounter==2)
-	{
-		var msg = $("#chat-input").val();
-		stompClient.send("/app/talktorobot2",{},JSON.stringify({'message':msg,'num':messageCounter}));
+	else {
+		var msg = "Kindly connect to web server";
 		request_message(msg);
-		messageCounter++;
 	}
-	
-    }
-    else {
-    	var msg = "Kindly connect to web server";
-		request_message(msg);
-    }
 }
 
 function showGreeting(message) {
 	response_message(message);
 }
 
-$(function () {
-    $("form").on('submit', function (e) {
-        e.preventDefault();
-    });
-    $( "#connect" ).click(function() { connect(); });
-    $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#chat-submit" ).click(function() { sendMessage(); });
+$(function() {
+	$("form").on('submit', function(e) {
+		e.preventDefault();
+	});
+	$("#connect").click(function() { connect(); });
+	$("#disconnect").click(function() { disconnect(); });
+	$("#chat-submit").click(function() { sendMessage(); });
 });
 
 
 
 //Chat Bot design manage Code
-$(".chat-box").hide();   
+$(".chat-box").hide();
 var INDEX = 0;
 function request_message(msg) {
-    INDEX++;
-    var str="";
-    str += "<div id='cm-msg-"+INDEX+"' class=\"chat-msg self\">";
-    str += "          <span class=\"msg-avatar\">";
-    str += "            <img src=\"/chatbot/face.svg\">";
-    str += "          <\/span>";
-    str += "          <div class=\"cm-msg-text\">";
-    str += msg;
-    str += "          <\/div>";
-    str += "        <\/div>";
-    $(".chat-logs").append(str);
-    $("#cm-msg-"+INDEX).hide().fadeIn(300);
-    $("#chat-input").val('');
-    $(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight}, 1000);  
-} 
-
-function response_message(msg) {
-
-	if(msg=="")
-		msg = "Hi! Sorry i beg your pardon.";
-    INDEX++;
-    var str="";
-    str += "<div id='cm-msg-"+INDEX+"' class=\"chat-msg user\">";
-    str += "          <span class=\"msg-avatar\">";
-    str += "            <img src=\"/chatbot/robot.svg\">";
-    str += "          <\/span>";
-    str += "          <div id='ct_"+INDEX+"' class=\"cm-msg-text\">";
-    str += msg;
-    str += " "
-    str += "          <span id='sp_"+INDEX+"' style='cursor:pointer;font-size:18px;' class=\"fa fa-volume-up\" onclick='speaktext("+INDEX+")'></\span><\/div>";
-    str += "        <\/div>";
-    $(".chat-logs").append(str);
-    $("#cm-msg-"+INDEX).hide().fadeIn(300);  
-    $(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight}, 1000);    
-    readOutLoud(msg);
+	INDEX++;
+	var str = "";
+	str += "<div id='cm-msg-" + INDEX + "' class=\"chat-msg self\">";
+	str += "          <span class=\"msg-avatar\">";
+	str += "            <img src=\"/chatbot/face.svg\">";
+	str += "          <\/span>";
+	str += "          <div class=\"cm-msg-text\">";
+	str += msg;
+	str += "          <\/div>";
+	str += "        <\/div>";
+	$(".chat-logs").append(str);
+	$("#cm-msg-" + INDEX).hide().fadeIn(300);
+	$("#chat-input").val('');
+	$(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight }, 1000);
 }
+var a = 1;
+function response_message(msg) {
+	debugger;
 
-function speaktext(e){
-	var msg =  $("#ct_"+e).html();  
+	if (msg == "")
+		msg = "Hi! Sorry, I beg your pardon.";
+	INDEX++;
+	var str = "";
+	str += "<div id='cm-msg-" + INDEX + "' class=\"chat-msg user\">";
+	str += "  <span class=\"msg-avatar\">";
+	str += "    <img src=\"/chatbot/robot.svg\">";
+	str += "  <\/span>";
+	str += "  <div id='ct_" + INDEX + "' class=\"cm-msg-text\">";
+	if (a == 1) {
+		var products = msg.split('\n'); // Split the string into lines
+			str += "    <ul>"; // Start of the list
+		str += "Welcome to Imprint. We provide below products select the service name";
+		{
+			for (var i = 0; i < products.length; i++) {
+				if (products[i]) {
+					str += "      <li>" + products[i] + "<\/li>"; // Each line becomes a list item
+				}
+				a++;
+			}
+		}
+		str += "    <\/ul>"; // End of the list
+	}
+	else{
+		str+=msg;
+	}
+	str += "    <span id='sp_" + INDEX + "' style='cursor:pointer;font-size:18px;' class=\"fa fa-volume-up\" onclick='speaktext(" + INDEX + ")'><\/span>";
+	str += "  <\/div>";
+	str += "<\/div>";
+
+	$(".chat-logs").append(str);
+	$("#cm-msg-" + INDEX).hide().fadeIn(300);
+	$(".chat-logs").stop().animate({
+		scrollTop: $(".chat-logs")[0].scrollHeight
+	}, 1000);
 	readOutLoud(msg);
 }
 
-function generate_button_message(msg, buttons){    
-	
-    INDEX++;
-    var btn_obj = buttons.map(function(button) {
-       return  "<li class=\"button\"><a href=\"javascript:;\" class=\"btn btn-primary chat-btn\" chat-value=\""+button.value+"\">"+button.name+"<\/a><\/li><br/><br/>";
-    }).join('');
-    var str="";
-    str += "<div id='cm-msg-"+INDEX+"' class=\"chat-msg user\">";
-    str += "          <span class=\"msg-avatar\">";
-    str += "            <img src=\"resources/chatbot/robot.svg\">";
-    str += "          <\/span>";
-    str += "          <div class=\"cm-msg-text\">";
-    str += msg;
-    str += "          <\/div>";
-    str += "          <div class=\"cm-msg-button\">";
-    str += "            <ul>";   
-    str += btn_obj;
-    str += "            <\/ul>";
-    str += "          <\/div>";
-    str += "        <\/div>";
-    $(".chat-logs").append(str);
-    $("#cm-msg-"+INDEX).hide().fadeIn(300);   
-    $(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight}, 1000);
-    $("#chat-input").attr("disabled", false);
-    readOutLoud(msg);
-  }
-  
-  
+
+function speaktext(e) {
+	var msg = $("#ct_" + e).html();
+	readOutLoud(msg);
+}
+
+function generate_button_message(msg, buttons) {
+
+	INDEX++;
+	var btn_obj = buttons.map(function(button) {
+		return "<li class=\"button\"><a href=\"javascript:;\" class=\"btn btn-primary chat-btn\" chat-value=\"" + button.value + "\">" + button.name + "<\/a><\/li><br/><br/>";
+	}).join('');
+	var str = "";
+	str += "<div id='cm-msg-" + INDEX + "' class=\"chat-msg user\">";
+	str += "          <span class=\"msg-avatar\">";
+	str += "            <img src=\"resources/chatbot/robot.svg\">";
+	str += "          <\/span>";
+	str += "          <div class=\"cm-msg-text\">";
+	str += msg;
+	str += "          <\/div>";
+	str += "          <div class=\"cm-msg-button\">";
+	str += "            <ul>";
+	str += btn_obj;
+	str += "            <\/ul>";
+	str += "          <\/div>";
+	str += "        <\/div>";
+	$(".chat-logs").append(str);
+	$("#cm-msg-" + INDEX).hide().fadeIn(300);
+	$(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight }, 1000);
+	$("#chat-input").attr("disabled", false);
+	readOutLoud(msg);
+}
+

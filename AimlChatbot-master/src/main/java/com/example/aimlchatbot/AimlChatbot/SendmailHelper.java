@@ -8,6 +8,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.example.aimlchatbot.dto.Userinformation;
 import com.example.aimlchatbot.helperclass.UserData;
 
 @Service
@@ -16,7 +17,7 @@ public class SendmailHelper {
 	@Autowired
 	JavaMailSender MailSender;
 	
-	public boolean sendLink(UserData datacollect) {
+	public boolean sendLink(Userinformation datacollect) {
 		MimeMessage mimeMessage = MailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
 		try {
@@ -27,7 +28,7 @@ public class SendmailHelper {
 			
 
 			String content = "<h1>Here the details are <h1>"
-					+ "<h1> Name:   "+datacollect.getName()+"   contactNumber:    "+datacollect.getPhNum()+"    EmailId:   "+datacollect.getEmail()+
+					+ "<h1> Name:   "+datacollect.getUname()+"   contactNumber:    "+datacollect.getMobnum()+"    EmailId:   "+datacollect.getEmail()+
 					 "</h1>";
 			helper.setText(content, true);
 

@@ -4,7 +4,7 @@ public class UserData {
 	
 private String name;
 
-private long phNum;
+private String phNum;
 
 private String email;
 
@@ -26,11 +26,11 @@ public void setEmail(String email) {
 	this.email = email;
 }
 
-public long getPhNum() {
+public String getPhNum() {
 	return phNum;
 }
 
-public void setPhNum(long phNum) {
+public void setPhNum(String phNum) {
 	this.phNum = phNum;
 }
 
